@@ -1,4 +1,5 @@
 #include <iostream>
+#include<time.h>
 using namespace std;
 
 class A
@@ -69,45 +70,140 @@ template <class T>
 class MyArray {
 private:
 	T* arr;
-	int size;
+	int rows, cols;
+
+public:
 
 	void clear() {
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < rows; i++) {
 			delete[] arr[i];
 		}
 		delete[] arr;
 	}
 
-public:
-	MyArray(int size);
-	void Output();
-	~MyArray();
-	MyArray(const MyArray<T>& b);
+	MyArray(int r, int c) : rows(r), cols(c)
+	{
+		arr = new T*[rows];
+		for (int i = 0; i < rows; i++) {
+			arr[i] = new T[cols];
+		}
+	}
+
+	~MyArray()
+	{
+		clear();
+	}
+
+	void Input()
+	{
+		cout << "Enter matrix values:\n";
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				cin >> arr[i][j];
+			}
+		}
+	}
+
+	void FillRandom() {
+		srand(time(0));
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				arr[i][j] = T(rand() % 100); 
+			}
+		}
+	}
+
+	void Display() const {
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				cout << arr[i][j] << " ";
+			}
+			cout << endl;
+		} 
+	}
+
+	MyArray operator+(const MyArray& other) const {
+		MyArray result(rows, cols);
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				result.arr[i][j] = arr[i][j] + other.arr[i][j];
+			}
+		}
+		return result;
+	}
+
+
+	MyArray operator-(const MyArray& other) const {
+		MyArray result(rows, cols);
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				result.arr[i][j] = arr[i][j] - other.arr[i][j];
+			}
+		}
+		return result;
+	}
+
+	MyArray operator*(const MyArray& other) const {
+		MyArray result(rows, cols);
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				result.arr[i][j] = arr[i][j] * other.arr[i][j];
+			}
+		}
+		return result;
+	}
+
+	MyArray operator/(const MyArray& other) const {
+		MyArray result(rows, cols);
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				result.arr[i][j] = arr[i][j] / other.arr[i][j];
+			}
+		}
+		return result;
+	}
+
+	T maxElement() const {
+		T max = arr[0][0];
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if (arr[i][j] > max) {
+					max = arr[i][j];
+				}
+			}
+		}
+		return max;
+	}
+
+	T minElement() const {
+		T min = arr[0][0];
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if (arr[i][j] < min) {
+					min = arr[i][j];
+				}
+			}
+		}
+		return min;
+	}
 };
 
-template<class T>
-MyArray<T>::MyArray(int size)
-{
-	arr = new T[size];
-	for (int i = 0; i < size; i++)
-	{
-		arr[i] = rand() % 100 * 1.2;
-	}
-}
+int main() {
+	MyArray<A>mat1(2, 2);
+	mat1.FillRandom();
+	mat1.Display();
 
-template<class T>
-void MyArray<T>::Output()
-{
+	cout << "Max element: " << mat1.maxElement() << endl;
+	cout << "Min element: " << mat1.minElement() << endl;
 
-}
+	MyArray<A> mat2(2, 2);
+	mat2.FillRandom();
+	cout << "Second matrix:\n";
+	mat2.Display();
 
-template<class T>
-MyArray<T>::~MyArray()
-{
-	clear();
-}
+	MyArray<A> matSum = mat1 + mat2;
+	cout << "Sum of matrices:\n";
+	matSum.Display();
 
-template<class T>
-MyArray<T>::MyArray(const MyArray<T>& b)
-{
+	return 0;
 }
