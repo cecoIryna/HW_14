@@ -41,6 +41,14 @@ public:
 		
 	}
 
+	bool operator>(const A& other) const {
+		return (x > other.x) || (x == other.x && y > other.y);
+	}
+
+	bool operator<(const A& other) const {
+		return (x < other.x) || (x == other.x && y < other.y);
+	}
+
 	int GetX() const { return x; }
 	int GetY() const { return y; }
 
@@ -70,118 +78,89 @@ template <class T>
 class MyArray {
 private:
 	T* arr;
-	int rows, cols;
+	int size;
 
 public:
-
-	void clear() {
-		for (int i = 0; i < rows; i++) {
-			delete[] arr[i];
-		}
-		delete[] arr;
-	}
-
-	MyArray(int r, int c) : rows(r), cols(c)
+	MyArray(int s) : size(s)
 	{
-		arr = new T*[rows];
-		for (int i = 0; i < rows; i++) {
-			arr[i] = new T[cols];
-		}
+		arr = new T[size];
 	}
 
 	~MyArray()
 	{
-		clear();
+		delete[] arr;
 	}
 
 	void Input()
 	{
-		cout << "Enter matrix values:\n";
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				cin >> arr[i][j];
-			}
+		cout << "Enter " << size*2 << " array values: ";
+		for (int i = 0; i < size; i++) {
+			cin >> arr[i];
 		}
 	}
 
 	void FillRandom() {
 		srand(time(0));
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				arr[i][j] = T(rand() % 100); 
-			}
+		for (int i = 0; i < size; i++) {
+			arr[i] = T(rand() % 100, rand() % 100);
 		}
 	}
 
 	void Display() const {
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				cout << arr[i][j] << " ";
-			}
+		for (int i = 0; i < size; i++) {
+			cout << arr[i] << " ";
 			cout << endl;
 		} 
 	}
 
 	MyArray operator+(const MyArray& other) const {
-		MyArray result(rows, cols);
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				result.arr[i][j] = arr[i][j] + other.arr[i][j];
-			}
+		MyArray result(size);
+		for (int i = 0; i < size; i++) {
+			result.arr[i] = arr[i] + other.arr[i];
 		}
 		return result;
 	}
 
 
 	MyArray operator-(const MyArray& other) const {
-		MyArray result(rows, cols);
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				result.arr[i][j] = arr[i][j] - other.arr[i][j];
-			}
+		MyArray result(size);
+		for (int i = 0; i < size; i++) {
+			result.arr[i] = arr[i] - other.arr[i];
 		}
 		return result;
 	}
 
 	MyArray operator*(const MyArray& other) const {
-		MyArray result(rows, cols);
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				result.arr[i][j] = arr[i][j] * other.arr[i][j];
-			}
+		MyArray result(size);
+		for (int i = 0; i < size; i++) {
+			result.arr[i] = arr[i] * other.arr[i];
 		}
 		return result;
 	}
 
 	MyArray operator/(const MyArray& other) const {
-		MyArray result(rows, cols);
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				result.arr[i][j] = arr[i][j] / other.arr[i][j];
-			}
+		MyArray result(size);
+		for (int i = 0; i < size; i++) {
+			result.arr[i] = arr[i] / other.arr[i];
 		}
 		return result;
 	}
 
 	T maxElement() const {
-		T max = arr[0][0];
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				if (arr[i][j] > max) {
-					max = arr[i][j];
-				}
+		T max = arr[0];
+		for (int i = 0; i < size; i++) {
+			if (arr[i] > max) {
+				max = arr[i];
 			}
 		}
 		return max;
 	}
 
 	T minElement() const {
-		T min = arr[0][0];
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				if (arr[i][j] < min) {
-					min = arr[i][j];
-				}
+		T min = arr[0];
+		for (int i = 0; i < size; i++) {
+			if (arr[i] < min) {
+				min = arr[i];
 			}
 		}
 		return min;
@@ -189,20 +168,21 @@ public:
 };
 
 int main() {
-	MyArray<A>mat1(2, 2);
-	mat1.FillRandom();
+	MyArray<A>mat1(2);
+	mat1.Input();
+	cout << "First array:\n";
 	mat1.Display();
 
 	cout << "Max element: " << mat1.maxElement() << endl;
 	cout << "Min element: " << mat1.minElement() << endl;
 
-	MyArray<A> mat2(2, 2);
+	MyArray<A> mat2(2);
 	mat2.FillRandom();
-	cout << "Second matrix:\n";
+	cout << "Second array:\n";
 	mat2.Display();
 
 	MyArray<A> matSum = mat1 + mat2;
-	cout << "Sum of matrices:\n";
+	cout << "Sum of array:\n";
 	matSum.Display();
 
 	return 0;
